@@ -3,20 +3,11 @@ import { GetServerSideProps } from "next";
 import { establishment } from "@/services/establishment";
 import { messages } from "@/config/messages";
 import { AxiosError } from "axios";
-import { ApplicationSettingInterface } from "@/types/application-setting";
 import { Page } from "./home/page";
 
-interface PageProps {
-  establishment?: ApplicationSettingInterface;
-}
-
-export default function Index({ establishment }: PageProps) {
-  if (!establishment) {
-    return <div>Aplicativo não carregado.</div>;
-  }
-
+export default function Index() {
   return (
-    <DefaultLayout establishment={establishment}>
+    <DefaultLayout>
       <Page />
     </DefaultLayout>
   );
@@ -24,9 +15,8 @@ export default function Index({ establishment }: PageProps) {
 
 export const getServerSideProps: GetServerSideProps = async () => {
   try {
-    const response = await establishment.get<ActionsResponse<[]>>(
-      "establishment"
-    );
+    const response =
+      await establishment.get<ActionsResponse<[]>>("establishment");
 
     if (response.data && response.status === 200) {
       if (response.data.status) {
@@ -47,11 +37,17 @@ export const getServerSideProps: GetServerSideProps = async () => {
         const data = error.response.data as ActionsResponse<[]>;
 
         console.log(data);
+        return {
+          props: {},
+        };
       }
     }
 
     if (error instanceof Error) {
-      //
+      console.log(error.message);
+      return {
+        props: {},
+      };
     }
 
     return {

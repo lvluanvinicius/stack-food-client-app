@@ -1,17 +1,12 @@
 import { WebHeader } from "@/components/web-header";
-import { ApplicationSettingInterface } from "@/types/application-setting";
 
 interface DefaultLayoutProps {
   children: React.ReactNode;
-  establishment: ApplicationSettingInterface;
 }
-export default function DefaultLayout({
-  children,
-  establishment,
-}: DefaultLayoutProps) {
+export default function DefaultLayout({ children }: DefaultLayoutProps) {
   return (
     <div className="">
-      <WebHeader establishment={establishment} />
+      <WebHeader />
 
       <main>{children}</main>
     </div>

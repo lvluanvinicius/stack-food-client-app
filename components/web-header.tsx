@@ -1,15 +1,13 @@
-import { ApplicationSettingInterface } from "@/types/application-setting";
+import { useApplication } from "@/contexts/application";
 import Image from "next/image";
 
-export function WebHeader({
-  establishment,
-}: {
-  establishment: ApplicationSettingInterface;
-}) {
+export function WebHeader() {
+  const { establishment } = useApplication();
+
   return (
     <header className="@container mt-8">
-      <nav className="@min-md:w-[60vw]  mx-auto flex @min-md:p-0 @min-md:items-end gap-6 px-4 flex-col items-center @min-md:flex-row">
-        <div className="w-[7rem] h-[7rem] @min-md:w-[10rem] @min-md:h-[10rem] rounded-lg">
+      <nav className="mx-auto flex flex-col items-center gap-6 px-4 @min-md:w-[60vw] @min-md:flex-row @min-md:items-end @min-md:p-0">
+        <div className="h-[7rem] w-[7rem] rounded-lg @min-md:h-[10rem] @min-md:w-[10rem]">
           <Image
             src={"/uploads/Logo-Exemplo.png"}
             alt={`Logo Exemplo`}
@@ -19,20 +17,20 @@ export function WebHeader({
           />
         </div>
 
-        <div className="flex flex-col @min-md:justify-end gap-6 items-center @min-md:items-start ">
-          <h1 className="text-white @min-md:text-2xl text-[1.1rem] font-bold">
+        <div className="flex flex-col items-center gap-6 @min-md:items-start @min-md:justify-end">
+          <h1 className="text-[1.1rem] font-bold text-white @min-md:text-2xl">
             {establishment.application.app_name}
           </h1>
 
-          <div className="text-white opacity-80 flex flex-col gap-2 items-center @min-md:items-start ">
-            <div className="text-sm w-full flex flex-col items-center @min-md:items-center @min-md:gap-2 @min-md:flex-row">
+          <div className="flex flex-col items-center gap-2 text-white opacity-80 @min-md:items-start">
+            <div className="flex w-full flex-col items-center text-sm @min-md:flex-row @min-md:items-center @min-md:gap-2">
               <strong>Contato: </strong>
               <span className="text-xs">
                 {establishment.establishment.phone}
               </span>
             </div>
 
-            <div className="text-sm mb-2 w-full flex flex-col items-center @min-md:items-center @min-md:gap-2 @min-md:flex-row">
+            <div className="mb-2 flex w-full flex-col items-center text-sm @min-md:flex-row @min-md:items-center @min-md:gap-2">
               <strong>Endereço: </strong>
               <span className="text-xs">
                 {establishment.establishment.address} -{" "}
