@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Roboto" sans-serif;
+
+  --color-emphasis: #f6a12f;
+  --color-emphasis-strong: #f67b1f;
+  --color-primary: #592305;
+  --color-secondary: #401d09;
+  --color-primary-varaint: #4f2812;
+  --color-tertiary: #4f2812;
+  --color-variant: #fce4bf;
+  --color-background: #eaeaea;
+  --color-white: #fff;
+}
+
+@layer Base {
+  * {
+    font-family: "Arial" sans-serif;
+  }
+
+  body {
+    background: var(--color-primary);
+  }
+}
