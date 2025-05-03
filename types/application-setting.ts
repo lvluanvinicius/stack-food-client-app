@@ -11,4 +11,5 @@ export interface ApplicationSettingInterface {
   application: {
     app_name: string;
   };
+  categories: string[];
 }

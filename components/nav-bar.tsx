@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { MenuIcon, X } from "lucide-react";
 import { MenuCategory } from "@/types/globals";
+import { useApplication } from "@/contexts/application";
 
 interface NavBarProps {
   activeCategory: MenuCategory | null;
@@ -15,6 +16,8 @@ const NavBar: React.FC<NavBarProps> = ({
   searchQuery,
   setSearchQuery,
 }) => {
+  const { establishment } = useApplication();
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -45,50 +48,22 @@ const NavBar: React.FC<NavBarProps> = ({
 
           {/* Desktop Navigation */}
           <div className="hidden space-x-4 md:flex">
-            <button
-              onClick={() => handleCategoryClick("burguers")}
-              className={`font-poppins rounded-full px-4 py-2 font-medium transition-colors duration-200 ${
-                activeCategory === "burguers"
-                  ? "bg-primary-500 text-white"
-                  : "bg-cream-light text-wood-dark hover:bg-primary-100"
-              }`}
-              aria-pressed={activeCategory === "burguers"}
-            >
-              Burguers
-            </button>
-            <button
-              onClick={() => handleCategoryClick("especiais")}
-              className={`font-poppins rounded-full px-4 py-2 font-medium transition-colors duration-200 ${
-                activeCategory === "especiais"
-                  ? "bg-primary-500 text-white"
-                  : "bg-cream-light text-wood-dark hover:bg-primary-100"
-              }`}
-              aria-pressed={activeCategory === "especiais"}
-            >
-              Especiais
-            </button>
-            <button
-              onClick={() => handleCategoryClick("acompanhados")}
-              className={`font-poppins rounded-full px-4 py-2 font-medium transition-colors duration-200 ${
-                activeCategory === "acompanhados"
-                  ? "bg-primary-500 text-white"
-                  : "bg-cream-light text-wood-dark hover:bg-primary-100"
-              }`}
-              aria-pressed={activeCategory === "acompanhados"}
-            >
-              Acompanhados
-            </button>
-            <button
-              onClick={() => handleCategoryClick("porcoes")}
-              className={`font-poppins rounded-full px-4 py-2 font-medium transition-colors duration-200 ${
-                activeCategory === "porcoes"
-                  ? "bg-primary-500 text-white"
-                  : "bg-cream-light text-wood-dark hover:bg-primary-100"
-              }`}
-              aria-pressed={activeCategory === "porcoes"}
-            >
-              Porções
-            </button>
+            {establishment.categories.map(function (category, index) {
+              return (
+                <button
+                  key={index}
+                  onClick={() => handleCategoryClick(category)}
+                  className={`font-poppins cursor-pointer rounded-full px-4 py-2 font-medium transition-colors duration-200 ${
+                    activeCategory === category
+                      ? "bg-primary-500 text-white"
+                      : "bg-cream-light text-wood-dark hover:bg-primary-100"
+                  }`}
+                  aria-pressed={activeCategory === category}
+                >
+                  {category}
+                </button>
+              );
+            })}
           </div>
 
           {/* Mobile Menu Button */}
@@ -105,46 +80,21 @@ const NavBar: React.FC<NavBarProps> = ({
         {/* Mobile Navigation Menu */}
         {isMenuOpen && (
           <div className="bg-cream-light absolute right-0 left-0 z-40 mx-4 mt-4 rounded-lg p-4 shadow-lg md:hidden">
-            <button
-              onClick={() => handleCategoryClick("burguers")}
-              className={`mb-2 block w-full rounded-md px-4 py-3 text-left font-medium ${
-                activeCategory === "burguers"
-                  ? "bg-primary-500 text-white"
-                  : "text-wood-dark hover:bg-primary-100"
-              }`}
-            >
-              Burguers
-            </button>
-            <button
-              onClick={() => handleCategoryClick("especiais")}
-              className={`mb-2 block w-full rounded-md px-4 py-3 text-left font-medium ${
-                activeCategory === "especiais"
-                  ? "bg-primary-500 text-white"
-                  : "text-wood-dark hover:bg-primary-100"
-              }`}
-            >
-              Especiais
-            </button>
-            <button
-              onClick={() => handleCategoryClick("acompanhados")}
-              className={`mb-2 block w-full rounded-md px-4 py-3 text-left font-medium ${
-                activeCategory === "acompanhados"
-                  ? "bg-primary-500 text-white"
-                  : "text-wood-dark hover:bg-primary-100"
-              }`}
-            >
-              Acompanhados
-            </button>
-            <button
-              onClick={() => handleCategoryClick("porcoes")}
-              className={`mb-2 block w-full rounded-md px-4 py-3 text-left font-medium ${
-                activeCategory === "porcoes"
-                  ? "bg-primary-500 text-white"
-                  : "text-wood-dark hover:bg-primary-100"
-              }`}
-            >
-              Porções
-            </button>
+            {establishment.categories.map(function (category, index) {
+              return (
+                <button
+                  key={index}
+                  onClick={() => handleCategoryClick(category)}
+                  className={`mb-2 block w-full cursor-pointer rounded-md px-4 py-3 text-left font-medium ${
+                    activeCategory === category
+                      ? "bg-primary-500 text-white"
+                      : "text-wood-dark hover:bg-primary-100"
+                  }`}
+                >
+                  Porções
+                </button>
+              );
+            })}
           </div>
         )}
       </div>
