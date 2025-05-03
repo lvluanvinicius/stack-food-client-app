@@ -14,6 +14,11 @@ const nextConfig: NextConfig = {
         hostname: "app.stackfood.com",
         pathname: "/client/**",
       },
+      {
+        hostname: "images.pexels.com",
+        protocol: "https",
+        pathname: "/**",
+      },
     ],
   },
 };
