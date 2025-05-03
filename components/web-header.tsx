@@ -20,7 +20,7 @@ export function WebHeader() {
             </div>
             <div>
               <h1 className="font-montserrat text-lg font-bold md:text-3xl">
-                Restaurante Tereza e Augusto
+                {establishment.establishment.company_name}
               </h1>
             </div>
           </div>

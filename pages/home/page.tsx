@@ -6,8 +6,11 @@ import FeaturedItems from "@/components/featured-items";
 import CartButton from "@/components/cart-button";
 import { CartProvider } from "@/contexts/cart-context";
 import { MenuCategory } from "@/types/globals";
+import { useApplication } from "@/contexts/application";
 
 export function Page() {
+  const { establishment } = useApplication();
+
   const [activeCategory, setActiveCategory] =
     useState<MenuCategory>("burguers");
   const [searchQuery, setSearchQuery] = useState("");
@@ -98,8 +101,9 @@ export function Page() {
         {/* Footer */}
         <footer className="bg-wood-dark text-cream-light mt-12 py-6">
           <div className="container mx-auto px-4 text-center">
-            <p className="text-sm">
-              © 2025 Restaurante Tereza e Augusto. Todos os direitos
+            <p className="text-xs">
+              © {new Date().getFullYear()}{" "}
+              {establishment.establishment.company_name}. Todos os direitos
               reservados.
             </p>
           </div>
