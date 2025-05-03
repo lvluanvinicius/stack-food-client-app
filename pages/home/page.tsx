@@ -5,7 +5,7 @@ import MenuSection from "@/components/menu-section";
 import FeaturedItems from "@/components/featured-items";
 import CartButton from "@/components/cart-button";
 import { CartProvider } from "@/contexts/cart-context";
-import { MenuCategory } from "@/types";
+import { MenuCategory } from "@/types/globals";
 
 export function Page() {
   const [activeCategory, setActiveCategory] =

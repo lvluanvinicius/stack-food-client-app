@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { MenuIcon, X } from "lucide-react";
-import { MenuCategory } from "@/types";
+import { MenuCategory } from "@/types/globals";
 
 interface NavBarProps {
   activeCategory: MenuCategory | null;

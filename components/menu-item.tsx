@@ -1,5 +1,5 @@
 import React from "react";
-import { MenuItem as MenuItemType } from "../types";
+import { MenuItem as MenuItemType } from "../types/globals";
 import { PlusCircle } from "lucide-react";
 import { useCart } from "@/contexts/cart-context";
 import Image from "next/image";
@@ -43,7 +43,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ item }) => {
         </p>
         <button
           onClick={() => addToCart(item)}
-          className="bg-primary-500 hover:bg-primary-600 flex w-full items-center justify-center rounded-md py-2 font-medium text-white transition-colors duration-200"
+          className="bg-primary-500 hover:bg-primary-600 flex w-full cursor-pointer items-center justify-center rounded-md py-2 font-medium text-white transition-colors duration-200"
           aria-label={`Adicionar ${name} ao carrinho`}
         >
           <PlusCircle size={18} className="mr-2" />

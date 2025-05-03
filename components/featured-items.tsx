@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
-import { MenuItem } from "@/types";
+import { MenuItem } from "@/types/globals";
 import { useCart } from "@/contexts/cart-context";
 import Image from "next/image";
 
