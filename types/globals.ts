@@ -4,7 +4,7 @@ export interface MenuItem {
   description: string;
   price: number;
   image: string;
-  category: "burguers" | "especiais" | "acompanhados" | "porcoes";
+  category: string;
   featured?: boolean;
 }
 
@@ -12,8 +12,4 @@ export interface CartItem extends MenuItem {
   quantity: number;
 }
 
-export type MenuCategory =
-  | "burguers"
-  | "especiais"
-  | "acompanhados"
-  | "porcoes";
+export type MenuCategory = string;
