@@ -37,7 +37,7 @@ const NavBar: React.FC<NavBarProps> = ({
               placeholder="Buscar item..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="border-primary-300 focus:ring-primary-500 font-poppins w-full rounded-full border px-4 py-2 pr-10 text-sm focus:ring-2 focus:outline-none"
+              className="border-primary-300 focus:ring-primary-500 font-poppins bg-primary-50 w-full rounded-full border px-4 py-2 pr-10 text-sm focus:ring-2 focus:outline-none"
               aria-label="Buscar no cardápio"
             />
             <span className="text-primary-500 absolute top-2 right-3">🔍</span>
