@@ -1,10 +1,10 @@
 import React from "react";
-import { MenuItem as MenuItemType } from "../types/globals";
 import MenuItem from "./menu-item";
+import { MenuItemInterface } from "@/types/menu";
 
 interface MenuSectionProps {
   title: string;
-  items: MenuItemType[];
+  items: MenuItemInterface[];
 }
 
 const MenuSection: React.FC<MenuSectionProps> = ({ title, items }) => {
@@ -19,9 +19,9 @@ const MenuSection: React.FC<MenuSectionProps> = ({ title, items }) => {
           {title}
         </h2>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2">
-          {items.map((item) => (
-            <MenuItem key={item.id} item={item} />
-          ))}
+          {items.map(function (item) {
+            return <MenuItem key={item.id} item={item} />;
+          })}
         </div>
       </div>
     </section>

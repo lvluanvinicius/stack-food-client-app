@@ -1,12 +1,13 @@
 import { useState } from "react";
 import NavBar from "@/components/nav-bar";
-import FeaturedItems from "@/components/featured-items";
 import CartButton from "@/components/cart-button";
 import { CartProvider } from "@/contexts/cart-context";
 import { MenuCategory } from "@/types/globals";
 import { useApplication } from "@/contexts/application";
 import { useQuery } from "@tanstack/react-query";
-import menuItems from "@/data/menuItems";
+import { nextApi } from "@/services/next-api";
+import { MenuSectionInterface } from "@/types/menu";
+import MenuSection from "@/components/menu-section";
 
 export function Page() {
   const { establishment } = useApplication();
@@ -15,9 +16,21 @@ export function Page() {
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const { data } = useQuery({
-    queryKey: ["menu-query-items"],
+    queryKey: ["menu-query-items", searchQuery],
     queryFn: async function () {
-      return menuItems.filter((i) => i.featured == true);
+      const response = await nextApi.get<
+        ActionsResponse<ApiResponse<MenuSectionInterface[]>>
+      >("menu", {
+        params: {
+          search: searchQuery,
+        },
+      });
+
+      if (response.data && response.status === 200) {
+        if (response.data.status) {
+          return response.data.data;
+        }
+      }
     },
   });
 
@@ -32,7 +45,18 @@ export function Page() {
         />
 
         {/* Only show featured items when not searching */}
-        {data && searchQuery === "" && <FeaturedItems items={data} />}
+        {/* {data && searchQuery === "" && <FeaturedItems items={data.data} />} */}
+
+        {data &&
+          data.data.map(function (item) {
+            return (
+              <MenuSection
+                key={item.id}
+                title={item.name}
+                items={item.menu_items}
+              />
+            );
+          })}
 
         {/* Floating cart button */}
         <CartButton />
