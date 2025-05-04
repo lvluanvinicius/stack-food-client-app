@@ -20,7 +20,7 @@ export function WebHeader() {
             </div>
             <div>
               <h1 className="font-montserrat text-lg font-bold md:text-3xl">
-                {establishment.establishment.company_name}
+                {establishment.application.app_name}
               </h1>
             </div>
           </div>

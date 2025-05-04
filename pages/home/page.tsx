@@ -1,53 +1,25 @@
-import { useState, useMemo } from "react";
-import menuItems from "@/data/menuItems";
+import { useState } from "react";
 import NavBar from "@/components/nav-bar";
-import MenuSection from "@/components/menu-section";
 import FeaturedItems from "@/components/featured-items";
 import CartButton from "@/components/cart-button";
 import { CartProvider } from "@/contexts/cart-context";
 import { MenuCategory } from "@/types/globals";
 import { useApplication } from "@/contexts/application";
+import { useQuery } from "@tanstack/react-query";
+import menuItems from "@/data/menuItems";
 
 export function Page() {
   const { establishment } = useApplication();
 
-  const [activeCategory, setActiveCategory] =
-    useState<MenuCategory>("burguers");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState<MenuCategory>("all");
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
-  // Filter items based on search query and active category
-  const filteredItems = useMemo(() => {
-    return menuItems.filter((item) => {
-      const matchesSearch =
-        searchQuery === "" ||
-        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.description.toLowerCase().includes(searchQuery.toLowerCase());
-
-      const matchesCategory =
-        activeCategory === null || item.category === activeCategory;
-
-      return matchesSearch && matchesCategory;
-    });
-  }, [searchQuery, activeCategory]);
-
-  // Get featured items
-  const featuredItems = useMemo(() => {
-    return menuItems.filter((item) => item.featured);
-  }, []);
-
-  // Group items by category
-  const burguerItems = filteredItems.filter(
-    (item) => item.category === "burguers",
-  );
-  const especialItems = filteredItems.filter(
-    (item) => item.category === "especiais",
-  );
-  const acompanhadosItems = filteredItems.filter(
-    (item) => item.category === "acompanhados",
-  );
-  const porcoesItems = filteredItems.filter(
-    (item) => item.category === "porcoes",
-  );
+  const { data } = useQuery({
+    queryKey: ["menu-query-items"],
+    queryFn: async function () {
+      return menuItems.filter((i) => i.featured == true);
+    },
+  });
 
   return (
     <CartProvider>
@@ -60,40 +32,7 @@ export function Page() {
         />
 
         {/* Only show featured items when not searching */}
-        {searchQuery === "" && <FeaturedItems items={featuredItems} />}
-
-        {/* Show appropriate sections based on active category */}
-        {(!activeCategory ||
-          activeCategory === "burguers" ||
-          searchQuery !== "") && (
-          <MenuSection title="Burguers" items={burguerItems} />
-        )}
-
-        {(!activeCategory ||
-          activeCategory === "especiais" ||
-          searchQuery !== "") && (
-          <MenuSection title="Especiais" items={especialItems} />
-        )}
-
-        {(!activeCategory ||
-          activeCategory === "acompanhados" ||
-          searchQuery !== "") && (
-          <MenuSection title="Acompanhados" items={acompanhadosItems} />
-        )}
-
-        {(!activeCategory ||
-          activeCategory === "porcoes" ||
-          searchQuery !== "") && (
-          <MenuSection title="Porções" items={porcoesItems} />
-        )}
-
-        {filteredItems.length === 0 && (
-          <div className="py-12 text-center">
-            <p className="text-xl text-gray-500">
-              Nenhum item encontrado. Tente outra busca.
-            </p>
-          </div>
-        )}
+        {data && searchQuery === "" && <FeaturedItems items={data} />}
 
         {/* Floating cart button */}
         <CartButton />
