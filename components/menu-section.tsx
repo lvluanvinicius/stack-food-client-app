@@ -18,7 +18,7 @@ const MenuSection: React.FC<MenuSectionProps> = ({ title, items }) => {
         <h2 className="text-wood-dark font-montserrat after:bg-primary-500 relative mb-6 inline-block pb-2 text-2xl font-bold after:absolute after:bottom-0 after:left-0 after:h-1 after:w-full after:rounded-full after:content-[''] md:text-3xl">
           {title}
         </h2>
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {items.map(function (item) {
             return <MenuItem key={item.id} item={item} />;
           })}

@@ -19,26 +19,10 @@ export function WebHeader() {
               />
             </div>
             <div>
-              <h1 className="font-montserrat text-lg font-bold md:text-3xl">
+              <h1 className="text-lg font-bold md:text-3xl">
                 {establishment.application.app_name}
               </h1>
             </div>
-          </div>
-
-          <div className="text-center md:ml-auto md:text-right">
-            <p className="mb-1 text-sm">
-              <strong>Contato: </strong>
-              <span className="text-xs">
-                {establishment.establishment.phone}
-              </span>
-            </p>
-            <p className="text-sm">
-              <strong>Endereço: </strong>
-              <span className="text-xs">
-                {establishment.establishment.address} -{" "}
-                {establishment.establishment.postal_code}
-              </span>
-            </p>
           </div>
         </div>
       </div>
