@@ -3,13 +3,14 @@ export interface MenuItem {
   name: string;
   description: string;
   price: number;
-  image: string;
+  photo: string;
   category: string;
   featured?: boolean;
 }
 
 export interface CartItem extends MenuItem {
   quantity: number;
+  complements?: MenuItem[];
 }
 
 export type MenuCategory = string;

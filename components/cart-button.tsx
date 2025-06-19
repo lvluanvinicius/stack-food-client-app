@@ -85,7 +85,7 @@ const CartButton: React.FC = () => {
                       className="flex border-b border-gray-100 pb-4"
                     >
                       <Image
-                        src={item.image}
+                        src={item.photo}
                         alt={item.name}
                         className="mr-3 h-20 w-20 rounded-md object-cover"
                         unoptimized

@@ -91,7 +91,7 @@ const NavBar: React.FC<NavBarProps> = ({
                       : "text-wood-dark hover:bg-primary-100"
                   }`}
                 >
-                  Porções
+                  {category}
                 </button>
               );
             })}

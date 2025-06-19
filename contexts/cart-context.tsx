@@ -1,3 +1,4 @@
+import { parseCookies, setCookie, destroyCookie } from "nookies";
 import React, {
   createContext,
   useContext,
@@ -6,6 +7,8 @@ import React, {
   ReactNode,
 } from "react";
 import { MenuItem, CartItem } from "../types/globals";
+
+const COOKIE_NAME = "appcart";
 
 interface CartContextType {
   cartItems: CartItem[];
@@ -31,7 +34,15 @@ interface CartProviderProps {
 }
 
 export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
+    const cookies = parseCookies();
+    try {
+      return cookies[COOKIE_NAME] ? JSON.parse(cookies[COOKIE_NAME]) : [];
+    } catch {
+      return [];
+    }
+  });
+
   const [totalItems, setTotalItems] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
 
@@ -86,7 +97,15 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
 
   const clearCart = () => {
     setCartItems([]);
+    destroyCookie(null, COOKIE_NAME);
   };
+
+  useEffect(() => {
+    setCookie(null, COOKIE_NAME, JSON.stringify(cartItems), {
+      maxAge: 60 * 60 * 24, // 1 dia
+      path: "/",
+    });
+  }, [cartItems]);
 
   return (
     <CartContext.Provider
