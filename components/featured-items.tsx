@@ -60,7 +60,7 @@ const FeaturedItems: React.FC<FeaturedItemsProps> = ({ items }) => {
             <div className="flex flex-col md:flex-row">
               <div className="h-60 w-full md:h-80 md:w-1/2">
                 <Image
-                  src={currentItem.image}
+                  src={currentItem.photo}
                   alt={currentItem.name}
                   className="h-full w-full object-cover"
                   unoptimized
