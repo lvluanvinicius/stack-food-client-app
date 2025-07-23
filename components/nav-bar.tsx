@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { MenuIcon, X } from "lucide-react";
 import { MenuCategory } from "@/types/globals";
 import { useApplication } from "@/contexts/application";
+import { useSession } from "next-auth/react";
 
 interface NavBarProps {
   activeCategory: MenuCategory | null;
@@ -17,6 +18,8 @@ const NavBar: React.FC<NavBarProps> = ({
   setSearchQuery,
 }) => {
   const { establishment } = useApplication();
+  const session = useSession();
+  console.log(session);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 

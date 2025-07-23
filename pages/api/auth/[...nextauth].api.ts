@@ -22,7 +22,7 @@ declare module "next-auth/jwt" {
 //   providers: [,],
 // };
 
-const handler = NextAuth({
+export default NextAuth({
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -89,5 +89,3 @@ const handler = NextAuth({
     },
   },
 });
-
-export { handler as GET, handler as POST };

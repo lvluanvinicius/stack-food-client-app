@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ShoppingCart, Trash2, Plus, Minus, X } from "lucide-react";
 import { useCart } from "@/contexts/cart-context";
 import Image from "next/image";
+import Link from "next/link";
 
 const CartButton: React.FC = () => {
   const {
@@ -159,12 +160,14 @@ const CartButton: React.FC = () => {
                   </div>
 
                   <div className="space-y-3">
-                    <button className="bg-primary-500 hover:bg-primary-600 w-full rounded-md py-3 font-medium text-white transition-colors duration-200">
-                      Finalizar Pedido
-                    </button>
+                    <Link href={"/pagamento"}>
+                      <button className="bg-primary-500 hover:bg-primary-600 mb-2 w-full cursor-pointer rounded-md py-3 font-medium text-white transition-colors duration-200">
+                        Finalizar Pedido
+                      </button>
+                    </Link>
                     <button
                       onClick={clearCart}
-                      className="w-full rounded-md border border-gray-300 py-2 font-medium text-gray-600 transition-colors duration-200 hover:bg-gray-50"
+                      className="w-full cursor-pointer rounded-md border border-gray-300 py-2 font-medium text-gray-600 transition-colors duration-200 hover:bg-gray-50"
                     >
                       Limpar Carrinho
                     </button>
