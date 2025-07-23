@@ -160,9 +160,9 @@ const CartButton: React.FC = () => {
                   </div>
 
                   <div className="space-y-3">
-                    <Link href={"/pagamento"}>
+                    <Link href={"/resumo"}>
                       <button className="bg-primary-500 hover:bg-primary-600 mb-2 w-full cursor-pointer rounded-md py-3 font-medium text-white transition-colors duration-200">
-                        Finalizar Pedido
+                        Ir para resumo
                       </button>
                     </Link>
                     <button

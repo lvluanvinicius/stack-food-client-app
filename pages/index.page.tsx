@@ -4,6 +4,7 @@ import { establishment } from "@/services/establishment";
 import { messages } from "@/config/messages";
 import { AxiosError } from "axios";
 import { Page } from "./home/page";
+import { ActionsResponse } from "@/types";
 
 export default function Index() {
   return (

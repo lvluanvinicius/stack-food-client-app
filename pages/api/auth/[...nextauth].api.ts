@@ -1,4 +1,5 @@
 import { establishment } from "@/services/establishment";
+import { ActionsResponse } from "@/types";
 import NextAuth, { User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 

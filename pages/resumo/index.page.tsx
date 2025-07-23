@@ -1,11 +1,11 @@
 import { messages } from "@/config/messages";
+import { CartProvider } from "@/contexts/cart-context";
 import DefaultLayout from "@/Layouts/default.layout";
 import { establishment } from "@/services/establishment";
+import { ActionsResponse } from "@/types";
 import { AxiosError } from "axios";
 import { GetServerSideProps } from "next";
 import { Page } from "./page";
-import { CartProvider } from "@/contexts/cart-context";
-import { ActionsResponse } from "@/types";
 
 export default function Index() {
   return (

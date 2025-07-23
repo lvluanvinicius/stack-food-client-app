@@ -1,6 +1,6 @@
 import CartButton from "@/components/cart-button";
+import { MercadoPago } from "../pagamento/components/mercadopago";
 import { Footer } from "@/components/footer";
-import { MercadoPago } from "./components/mercadopago";
 
 export function Page() {
   return (

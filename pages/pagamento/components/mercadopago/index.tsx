@@ -38,12 +38,22 @@ export function MercadoPago() {
   }
 
   return (
-    <div className="w-full">
-      <div className="container mx-auto w-full border">
-        <form onSubmit={handleSubmit(submit)}>
-          <button>Enviar</button>
-        </form>
+    <form onSubmit={console.log} className="container mx-auto px-4">
+      <div className="flex flex-col gap-4">
+        <div className="mt-6 grid grid-cols-1 gap-4 xl:grid-cols-3">
+          {/* Resumo do pedido. */}
+          <div className="col-span-2 flex flex-col gap-4 rounded-md bg-white p-4">
+            <div className="w-full">
+              <h4 className="">Produtos</h4>
+
+              <div className="mt-4">sad</div>
+            </div>
+          </div>
+
+          {/* Formulário de Pagamento */}
+          <div className="col-span-1 rounded-md bg-white p-4">Card</div>
+        </div>
       </div>
-    </div>
+    </form>
   );
 }

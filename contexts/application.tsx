@@ -1,4 +1,4 @@
-import { ApplicationSettingInterface } from "@/types/application-setting";
+import { ApplicationSettingInterface } from "@/types";
 import React, { createContext, useContext } from "react";
 
 interface ApplicationProps {
