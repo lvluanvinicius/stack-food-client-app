@@ -1,4 +1,5 @@
-import { parseCookies, setCookie, destroyCookie } from "nookies";
+import { getCookie, setCookie, deleteCookie } from "cookies-next";
+
 import React, {
   createContext,
   useContext,
@@ -34,20 +35,48 @@ interface CartProviderProps {
 }
 
 export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
-  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
-    const cookies = parseCookies();
+  // Função para carregar dados do cookie
+  const loadCartFromCookie = (): CartItem[] => {
     try {
-      return cookies[COOKIE_NAME] ? JSON.parse(cookies[COOKIE_NAME]) : [];
-    } catch {
+      const cookieValue = getCookie(COOKIE_NAME);
+      if (cookieValue && typeof cookieValue === "string") {
+        return JSON.parse(cookieValue);
+      }
+      return [];
+    } catch (error) {
+      console.error("Erro ao carregar carrinho do cookie:", error);
       return [];
     }
-  });
+  };
 
+  // Função para salvar dados no cookie
+  const saveCartToCookie = (items: CartItem[]) => {
+    try {
+      setCookie(COOKIE_NAME, JSON.stringify(items), {
+        maxAge: 60 * 60 * 24, // 1 dia
+        path: "/",
+        sameSite: "lax", // Adiciona configuração de segurança
+      });
+    } catch (error) {
+      console.error("Erro ao salvar carrinho no cookie:", error);
+    }
+  };
+
+  // Estado inicial carregado do cookie
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [isInitialized, setIsInitialized] = useState(false);
 
+  // Carrega dados do cookie na inicialização
   useEffect(() => {
-    // Calculate total items and price whenever cartItems changes
+    const savedCart = loadCartFromCookie();
+    setCartItems(savedCart);
+    setIsInitialized(true);
+  }, []);
+
+  // Calcula totais sempre que cartItems muda
+  useEffect(() => {
     const items = cartItems.reduce((sum, item) => sum + item.quantity, 0);
     const price = cartItems.reduce(
       (sum, item) => sum + item.price * item.quantity,
@@ -58,22 +87,29 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     setTotalPrice(price);
   }, [cartItems]);
 
+  // Salva no cookie sempre que cartItems muda (após inicialização)
+  useEffect(() => {
+    if (isInitialized) {
+      saveCartToCookie(cartItems);
+    }
+  }, [cartItems, isInitialized]);
+
   const addToCart = (item: MenuItem) => {
     setCartItems((prevItems) => {
-      // Check if item is already in cart
+      // Verifica se o item já existe no carrinho
       const existingItem = prevItems.find(
         (cartItem) => cartItem.id === item.id,
       );
 
       if (existingItem) {
-        // Update quantity if item exists
+        // Atualiza quantidade se o item já existe
         return prevItems.map((cartItem) =>
           cartItem.id === item.id
             ? { ...cartItem, quantity: cartItem.quantity + 1 }
             : cartItem,
         );
       } else {
-        // Add new item with quantity 1
+        // Adiciona novo item com quantidade 1
         return [...prevItems, { ...item, quantity: 1 }];
       }
     });
@@ -84,12 +120,12 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
       const existingItem = prevItems.find((item) => item.id === id);
 
       if (existingItem && existingItem.quantity > 1) {
-        // Decrease quantity if more than 1
+        // Diminui quantidade se for maior que 1
         return prevItems.map((item) =>
           item.id === id ? { ...item, quantity: item.quantity - 1 } : item,
         );
       } else {
-        // Remove item completely if quantity is 1
+        // Remove item completamente se quantidade for 1
         return prevItems.filter((item) => item.id !== id);
       }
     });
@@ -97,15 +133,12 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
 
   const clearCart = () => {
     setCartItems([]);
-    destroyCookie(null, COOKIE_NAME);
+    try {
+      deleteCookie(COOKIE_NAME, { path: "/" });
+    } catch (error) {
+      console.error("Erro ao limpar cookie do carrinho:", error);
+    }
   };
-
-  useEffect(() => {
-    setCookie(null, COOKIE_NAME, JSON.stringify(cartItems), {
-      maxAge: 60 * 60 * 24, // 1 dia
-      path: "/",
-    });
-  }, [cartItems]);
 
   return (
     <CartContext.Provider

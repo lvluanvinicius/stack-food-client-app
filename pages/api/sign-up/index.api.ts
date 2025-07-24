@@ -9,18 +9,15 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   try {
-    const response =
-      await establishment.get<ActionsResponse<[]>>("establishment");
+    const data = req.body;
 
-    if (response.data && response.status === 200) {
-      if (response.data.status) {
-        return res.status(200).json(response.data);
-      } else {
-        throw new Error(response.data.message);
-      }
+    const response = await establishment.post("/sign-up", data);
+
+    if (response.status === 200) {
+      return res.status(response.status).json(response.data);
     }
 
-    throw new Error(messages.backend.unknownError);
+    return res.status(response.status).json(response.data);
   } catch (error) {
     if (error instanceof AxiosError) {
       if (error.response && error.response.data) {

@@ -1,128 +1,369 @@
+import React, { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as Tabs from "@radix-ui/react-tabs";
-import { useState } from "react";
-import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { X, Mail, Lock, User, Eye, EyeOff, Phone } from "lucide-react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/router";
+import { formatPhone } from "@/tools/formatter";
+import { nextApi } from "@/services/next-api";
+import { ActionsResponse } from "@/types";
+import { AxiosError } from "axios";
+import { messages } from "@/config/messages";
 
-const formLoginSchema = z.object({
-  email: z.string().email("Email inválido"),
-  password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
-});
-
-const formRegisterSchema = z
-  .object({
-    name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
-    email: z.string().email("Email inválido"),
-    password: z
-      .string()
-      .min(8, "Senha deve ter pelo menos 8 caracteres")
-      .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-        "Senha deve conter pelo menos uma letra minúscula, uma maiúscula e um número",
-      ),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Senhas não coincidem",
-    path: ["confirmPassword"],
+export const AuthCustomer: React.FC = () => {
+  const [formValue, setFormValue] = useState("login");
+  const [message, setMessage] = useState<string | null>(null);
+  const [open, setOpen] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState<boolean>(false);
+  const [loginData, setLoginData] = useState<{
+    phone: string;
+    password: string;
+  }>({
+    phone: "",
+    password: "",
+  });
+  const [registerData, setRegisterData] = useState<{
+    name: string;
+    phone: string;
+    password: string;
+    confirmPassword: string;
+  }>({
+    name: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
   });
 
-type FormLoginType = z.infer<typeof formLoginSchema>;
-type FormRegisterType = z.infer<typeof formRegisterSchema>;
+  const router = useRouter();
 
-export function AuthCustomer() {
-  const [open, setOpen] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("login");
+  async function onLogin() {
+    const response = await signIn("credentials", {
+      phone: loginData.phone,
+      password: loginData.password,
+      callbackUrl: router.asPath,
+      redirect: false,
+    });
 
-  const loginForm = useForm<FormLoginType>({
-    resolver: zodResolver(formLoginSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
-
-  const registerForm = useForm<FormRegisterType>({
-    resolver: zodResolver(formRegisterSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-    },
-  });
-
-  const onLoginSubmit = async (data: FormLoginType) => {
-    setIsLoading(true);
-    try {
-      // Simular chamada da API
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      console.log("Login:", data);
-      setOpen(false);
-      loginForm.reset();
-    } catch (error) {
-      console.error("Erro no login:", error);
-    } finally {
-      setIsLoading(false);
+    if (response) {
+      if (response.ok) {
+        return null;
+      } else {
+        setMessage(response.error);
+        return;
+      }
     }
+
+    setMessage("Houve um erro desconhecido ao efetuar o login.");
+  }
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    await onLogin();
   };
 
-  const onRegisterSubmit = async (data: FormRegisterType) => {
-    setIsLoading(true);
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (registerData.password !== registerData.confirmPassword) {
+      setMessage("As senhas não coincidem");
+      return;
+    }
+
     try {
-      // Simular chamada da API
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      console.log("Registro:", data);
-      setOpen(false);
-      registerForm.reset();
+      const response = await nextApi.post<ActionsResponse<[]>>(
+        "/sign-up",
+        registerData,
+      );
+
+      if (response.status === 200 && response.data.status) {
+        setLoginData({
+          phone: registerData.phone,
+          password: registerData.password,
+        });
+        setRegisterData({
+          confirmPassword: "",
+          name: "",
+          password: "",
+          phone: "",
+        });
+
+        await onLogin();
+      }
     } catch (error) {
-      console.error("Erro no registro:", error);
-    } finally {
-      setIsLoading(false);
+      if (error instanceof AxiosError && error.response) {
+        const data = error.response.data as ActionsResponse<[]>;
+
+        return setMessage(data.message);
+      }
+
+      setMessage(messages.frontend.unknow_error);
     }
   };
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger>Entrar</Dialog.Trigger>
+      <Dialog.Trigger asChild>
+        <button className="flex items-center space-x-2 rounded-lg border border-amber-200 px-4 py-2 transition-colors duration-200 hover:bg-amber-700">
+          <User className="h-4 w-4" />
+          <span className="font-medium">Entrar</span>
+        </button>
+      </Dialog.Trigger>
       <Dialog.Portal>
-        <Dialog.Overlay />
-        <Dialog.Content className="fixed top-[50%] left-[50%] translate-x-[-50%-50%] rounded-md border bg-white p-4">
-          <Tabs.Root defaultValue={activeTab}>
-            <Tabs.List>
-              <Tabs.Trigger value="account">Login</Tabs.Trigger>
-              <Tabs.Trigger value="register">Registro</Tabs.Trigger>
-            </Tabs.List>
+        <Dialog.Overlay className="animate-in fade-in-0 fixed inset-0 bg-black/50 backdrop-blur-sm" />
+        <Dialog.Content className="animate-in fade-in-0 zoom-in-95 fixed top-1/2 left-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 transform rounded-2xl bg-white shadow-2xl duration-300">
+          <div className="p-6">
+            <div className="mb-6 flex items-center justify-between">
+              <Dialog.Title className="text-2xl font-bold text-gray-900">
+                Bem-vindo ao Bryan
+              </Dialog.Title>
+              <Dialog.Close className="rounded-full p-2 transition-colors hover:bg-gray-100">
+                <X className="h-5 w-5 text-gray-500" />
+              </Dialog.Close>
+            </div>
 
-            <Tabs.Content value="login">
-              <form onSubmit={loginForm.handleSubmit(onLoginSubmit)}>
-                <label className="flex flex-col gap-4">
-                  <span>E-mail</span>
-                  <input placeholder="Ex: minhaconta@exemplo.com" />
-                </label>
+            <Dialog.Description className="mb-6 text-center text-gray-600">
+              Acesse sua conta ou registre-se para fazer seus pedidos
+            </Dialog.Description>
 
-                <label className="flex flex-col gap-4">
-                  <span>Senha</span>
-                  <input />
-                </label>
+            <Tabs.Root
+              onValueChange={(form) => setFormValue(form)}
+              defaultValue={formValue}
+              className="w-full"
+            >
+              <Tabs.List className="mb-6 grid w-full grid-cols-2 rounded-lg bg-gray-100 p-1">
+                <Tabs.Trigger
+                  value="login"
+                  className="rounded-md px-4 py-2 text-sm font-medium text-gray-600 transition-all hover:text-gray-900 data-[state=active]:bg-white data-[state=active]:text-amber-900 data-[state=active]:shadow-sm"
+                >
+                  Entrar
+                </Tabs.Trigger>
+                <Tabs.Trigger
+                  value="register"
+                  className="rounded-md px-4 py-2 text-sm font-medium text-gray-600 transition-all hover:text-gray-900 data-[state=active]:bg-white data-[state=active]:text-amber-900 data-[state=active]:shadow-sm"
+                >
+                  Registrar
+                </Tabs.Trigger>
+              </Tabs.List>
 
-                <footer>
-                  <button type="submit">Entrar</button>
-                  <button type="button">Cancelar</button>
-                </footer>
-              </form>
-            </Tabs.Content>
+              <Tabs.Content value="login">
+                <form onSubmit={handleLogin} className="space-y-4">
+                  <div>
+                    <label className="mb-2 block text-sm font-medium text-gray-700">
+                      Celular
+                    </label>
+                    <div className="relative">
+                      <Mail className="absolute top-3 left-3 h-5 w-5 text-gray-400" />
+                      <input
+                        type="tel"
+                        required
+                        value={loginData.phone}
+                        onChange={(e) =>
+                          setLoginData({
+                            ...loginData,
+                            phone: formatPhone(e.target.value),
+                          })
+                        }
+                        className="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-10 transition-colors outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500"
+                        placeholder="14 99999-9999"
+                      />
+                    </div>
+                  </div>
 
-            <Tabs.Content value="register">
-              <p>Access and update your documents.</p>
-            </Tabs.Content>
-          </Tabs.Root>
+                  <div>
+                    <label className="mb-2 block text-sm font-medium text-gray-700">
+                      Senha
+                    </label>
+                    <div className="relative">
+                      <Lock className="absolute top-3 left-3 h-5 w-5 text-gray-400" />
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        required
+                        value={loginData.password}
+                        onChange={(e) =>
+                          setLoginData({
+                            ...loginData,
+                            password: e.target.value,
+                          })
+                        }
+                        className="w-full rounded-lg border border-gray-300 py-3 pr-12 pl-10 transition-colors outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500"
+                        placeholder="Sua senha"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-5 w-5" />
+                        ) : (
+                          <Eye className="h-5 w-5" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  {message && (
+                    <div>
+                      <p className="text-center text-sm text-red-400">
+                        {message}
+                      </p>
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    className="w-full transform rounded-lg bg-gradient-to-r from-amber-900 to-amber-800 px-4 py-3 font-medium text-white transition-all duration-200 hover:scale-[1.02] hover:from-amber-800 hover:to-amber-700 focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
+                  >
+                    Entrar
+                  </button>
+
+                  {/* <div className="text-center">
+                    <button
+                      type="button"
+                      className="text-sm text-amber-800 hover:text-amber-900 hover:underline"
+                    >
+                      Esqueceu sua senha?
+                    </button>
+                  </div> */}
+                </form>
+              </Tabs.Content>
+
+              <Tabs.Content value="register">
+                <form onSubmit={handleRegister} className="space-y-4">
+                  <div>
+                    <label className="mb-2 block text-sm font-medium text-gray-700">
+                      Nome Completo
+                    </label>
+                    <div className="relative">
+                      <User className="absolute top-3 left-3 h-5 w-5 text-gray-400" />
+                      <input
+                        type="text"
+                        required
+                        value={registerData.name}
+                        onChange={(e) =>
+                          setRegisterData({
+                            ...registerData,
+                            name: e.target.value,
+                          })
+                        }
+                        className="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-10 transition-colors outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500"
+                        placeholder="Seu nome completo"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-sm font-medium text-gray-700">
+                      Celular
+                    </label>
+                    <div className="relative">
+                      <Phone className="absolute top-4 left-3 h-5 w-5 text-gray-400" />
+                      <input
+                        type="tel"
+                        required
+                        value={registerData.phone}
+                        onChange={(e) =>
+                          setRegisterData({
+                            ...registerData,
+                            phone: formatPhone(e.target.value),
+                          })
+                        }
+                        className="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-10 transition-colors outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500"
+                        placeholder="14 99999-9999"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-sm font-medium text-gray-700">
+                      Senha
+                    </label>
+                    <div className="relative">
+                      <Lock className="absolute top-3 left-3 h-5 w-5 text-gray-400" />
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        required
+                        value={registerData.password}
+                        onChange={(e) =>
+                          setRegisterData({
+                            ...registerData,
+                            password: e.target.value,
+                          })
+                        }
+                        className="w-full rounded-lg border border-gray-300 py-3 pr-12 pl-10 transition-colors outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500"
+                        placeholder="Crie uma senha"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-5 w-5" />
+                        ) : (
+                          <Eye className="h-5 w-5" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-sm font-medium text-gray-700">
+                      Confirmar Senha
+                    </label>
+                    <div className="relative">
+                      <Lock className="absolute top-3 left-3 h-5 w-5 text-gray-400" />
+                      <input
+                        type={showConfirmPassword ? "text" : "password"}
+                        required
+                        value={registerData.confirmPassword}
+                        onChange={(e) =>
+                          setRegisterData({
+                            ...registerData,
+                            confirmPassword: e.target.value,
+                          })
+                        }
+                        className="w-full rounded-lg border border-gray-300 py-3 pr-12 pl-10 transition-colors outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500"
+                        placeholder="Confirme sua senha"
+                      />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
+                        className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+                      >
+                        {showConfirmPassword ? (
+                          <EyeOff className="h-5 w-5" />
+                        ) : (
+                          <Eye className="h-5 w-5" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  {message && (
+                    <div>
+                      <p className="text-center text-sm text-red-400">
+                        {message}
+                      </p>
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    className="w-full transform rounded-lg bg-gradient-to-r from-amber-900 to-amber-800 px-4 py-3 font-medium text-white transition-all duration-200 hover:scale-[1.02] hover:from-amber-800 hover:to-amber-700 focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
+                  >
+                    Criar Conta
+                  </button>
+                </form>
+              </Tabs.Content>
+            </Tabs.Root>
+          </div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
   );
-}
+};

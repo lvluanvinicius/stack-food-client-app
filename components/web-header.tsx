@@ -1,8 +1,8 @@
 import { useApplication } from "@/contexts/application";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSession } from "next-auth/react";
-import Image from "next/image";
 import { AuthCustomer } from "./auth-customer";
+import Image from "next/image";
 
 export function WebHeader() {
   const { establishment } = useApplication();
@@ -39,12 +39,15 @@ export function WebHeader() {
 
 function MenuDefaultHeader() {
   const session = useSession();
-  console.log(session);
 
   return (
-    <ul className="border">
+    <ul className="">
       <li>
-        <AuthCustomer />
+        {session.status === "authenticated" ? (
+          <div>Perfil</div>
+        ) : (
+          <AuthCustomer />
+        )}
       </li>
     </ul>
   );

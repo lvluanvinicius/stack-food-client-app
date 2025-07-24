@@ -3,24 +3,31 @@ import { establishment } from "@/services/establishment";
 import { ActionsResponse } from "@/types";
 import { AxiosError } from "axios";
 import { NextApiRequest, NextApiResponse } from "next";
+import { getToken } from "next-auth/jwt";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+export async function store(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const response =
-      await establishment.get<ActionsResponse<[]>>("establishment");
-
-    if (response.data && response.status === 200) {
-      if (response.data.status) {
-        return res.status(200).json(response.data);
-      } else {
-        throw new Error(response.data.message);
-      }
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    if (!token) {
+      return res.status(401).json({
+        status: false,
+        message: "Sua sessão é inválida.",
+      });
     }
 
-    throw new Error(messages.backend.unknownError);
+    const data = req.body;
+
+    const response = await establishment.post("/addresses", data, {
+      headers: {
+        Authorization: `Bearer ${token.accessToken}`,
+      },
+    });
+
+    if (response.status === 200) {
+      return res.status(response.status).json(response.data);
+    }
+
+    return res.status(response.status).json(response.data);
   } catch (error) {
     if (error instanceof AxiosError) {
       if (error.response && error.response.data) {

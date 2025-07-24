@@ -70,12 +70,14 @@ const CartButton: React.FC = () => {
               <div className="flex h-60 flex-col items-center justify-center">
                 <ShoppingCart size={48} className="mb-4 text-gray-300" />
                 <p className="text-lg text-gray-500">Seu carrinho está vazio</p>
-                <button
-                  onClick={toggleCart}
-                  className="text-primary-500 hover:text-primary-600 mt-4 font-medium"
-                >
-                  Continuar comprando
-                </button>
+                <Link href={"/"}>
+                  <button
+                    onClick={toggleCart}
+                    className="text-primary-500 hover:text-primary-600 mt-4 font-medium"
+                  >
+                    Continuar comprando
+                  </button>
+                </Link>
               </div>
             ) : (
               <>

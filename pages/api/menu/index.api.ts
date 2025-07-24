@@ -1,5 +1,6 @@
 import { messages } from "@/config/messages";
 import { establishment } from "@/services/establishment";
+import { ActionsResponse } from "@/types";
 import { AxiosError } from "axios";
 import { NextApiRequest, NextApiResponse } from "next";
 
