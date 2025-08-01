@@ -55,6 +55,8 @@ export interface FormAddressInterface {
   city_ibge: string;
   city_gia: string;
   city_siafi: string;
+  description: string;
+  default: "Y" | "N";
 }
 
 export interface AddressInterface extends FormAddressInterface {
