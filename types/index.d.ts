@@ -43,3 +43,23 @@ export interface ApplicationSettingInterface {
   };
   categories: string[];
 }
+
+export interface FormAddressInterface {
+  cep: string;
+  address: string;
+  number: string;
+  complement: string;
+  district: string;
+  state: string;
+  city: string;
+  city_ibge: string;
+  city_gia: string;
+  city_siafi: string;
+}
+
+export interface AddressInterface extends FormAddressInterface {
+  id: number;
+  customer_id: number;
+  created_at: string;
+  updated_at: string;
+}

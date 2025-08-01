@@ -3,6 +3,8 @@ import { ActionsResponse } from "@/types";
 import { AxiosError } from "axios";
 import NextAuth, { User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { jwtDecode } from "jwt-decode";
+import { JWT } from "next-auth/jwt";
 
 declare module "next-auth" {
   interface Session {
@@ -18,6 +20,7 @@ declare module "next-auth" {
 declare module "next-auth/jwt" {
   interface JWT {
     accessToken?: string;
+    exp: number;
   }
 }
 
@@ -87,6 +90,17 @@ export default NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.accessToken = user.accessToken;
+        token.accessToken = user.accessToken;
+      }
+
+      const decoded: JWT = jwtDecode(token.accessToken as string);
+
+      token.exp = decoded.exp;
+
+      // Checagem de expiração (opcional)
+      const now = Math.floor(Date.now() / 1000);
+      if (token.exp && token.exp < now) {
+        throw new Error("Sessão expirada");
       }
 
       return token;

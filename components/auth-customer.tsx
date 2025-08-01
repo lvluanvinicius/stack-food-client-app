@@ -9,11 +9,13 @@ import { nextApi } from "@/services/next-api";
 import { ActionsResponse } from "@/types";
 import { AxiosError } from "axios";
 import { messages } from "@/config/messages";
+import { useAuth } from "@/contexts/auth-provider";
 
 export const AuthCustomer: React.FC = () => {
+  const { formOpen, onOpenFormChange } = useAuth();
+
   const [formValue, setFormValue] = useState("login");
   const [message, setMessage] = useState<string | null>(null);
-  const [open, setOpen] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
@@ -103,7 +105,7 @@ export const AuthCustomer: React.FC = () => {
   };
 
   return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
+    <Dialog.Root open={formOpen} onOpenChange={onOpenFormChange}>
       <Dialog.Trigger asChild>
         <button className="flex items-center space-x-2 rounded-lg border border-amber-200 px-4 py-2 transition-colors duration-200 hover:bg-amber-700">
           <User className="h-4 w-4" />
@@ -111,8 +113,8 @@ export const AuthCustomer: React.FC = () => {
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>
-        <Dialog.Overlay className="animate-in fade-in-0 fixed inset-0 bg-black/50 backdrop-blur-sm" />
-        <Dialog.Content className="animate-in fade-in-0 zoom-in-95 fixed top-1/2 left-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 transform rounded-2xl bg-white shadow-2xl duration-300">
+        <Dialog.Overlay className="animate-in fade-in-0 fixed inset-0 !z-50 bg-black/40 backdrop-blur-sm" />
+        <Dialog.Content className="animate-in fade-in-0 zoom-in-95 fixed top-1/2 left-1/2 !z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 transform rounded-2xl bg-white shadow-2xl duration-300">
           <div className="p-6">
             <div className="mb-6 flex items-center justify-between">
               <Dialog.Title className="text-2xl font-bold text-gray-900">

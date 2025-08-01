@@ -2,15 +2,15 @@ import { useCart } from "@/contexts/cart-context";
 import { CartItem } from "@/types/globals";
 import { Minus, Plus, Trash2 } from "lucide-react";
 
-interface ProductCardProps {
+interface ProductCardItemProps {
   cartItem: CartItem;
 }
 
-export function ProductCard({ cartItem }: ProductCardProps) {
+export function ProductCardItem({ cartItem }: ProductCardItemProps) {
   const { addToCart, removeFromCart } = useCart();
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md">
+    <div className="rounded-lg border border-gray-200 bg-white p-4 transition-all duration-200 hover:shadow-md">
       <div className="flex gap-4">
         <img
           src={cartItem.photo}
@@ -32,7 +32,7 @@ export function ProductCard({ cartItem }: ProductCardProps) {
               <button
                 type="button"
                 onClick={() => removeFromCart(cartItem.id)}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 transition-colors hover:bg-gray-200"
+                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-gray-100 transition-colors hover:bg-gray-200"
               >
                 <Minus className="h-4 w-4 text-gray-600" />
               </button>
@@ -42,7 +42,7 @@ export function ProductCard({ cartItem }: ProductCardProps) {
               <button
                 type="button"
                 onClick={() => addToCart(cartItem)}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 transition-colors hover:bg-gray-200"
+                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-gray-100 transition-colors hover:bg-gray-200"
               >
                 <Plus className="h-4 w-4 text-gray-600" />
               </button>
@@ -53,13 +53,29 @@ export function ProductCard({ cartItem }: ProductCardProps) {
                     removeFromCart(cartItem.id);
                   }
                 }}
-                className="ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-red-50 transition-colors hover:bg-red-100"
+                className="ml-2 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-red-50 transition-colors hover:bg-red-100"
               >
                 <Trash2 className="h-4 w-4 text-red-500" />
               </button>
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+export function ProductCard() {
+  const { cartItems } = useCart();
+
+  return (
+    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <h2 className="mb-6 text-lg font-semibold text-gray-900">Seus Itens</h2>
+      <div className="space-y-4">
+        {/* Card Product */}
+        {cartItems.map(function (cart) {
+          return <ProductCardItem key={cart.id} cartItem={cart} />;
+        })}
       </div>
     </div>
   );

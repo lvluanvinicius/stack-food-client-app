@@ -19,7 +19,6 @@ const NavBar: React.FC<NavBarProps> = ({
 }) => {
   const { establishment } = useApplication();
   const session = useSession();
-  console.log(session);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -33,7 +32,7 @@ const NavBar: React.FC<NavBarProps> = ({
   };
 
   return (
-    <nav className="bg-cream-dark sticky top-0 z-30 shadow-md">
+    <nav className="bg-cream-dark sticky top-0 z-10 shadow-md">
       <div className="container mx-auto px-4 py-3 md:px-8">
         <div className="flex items-center justify-between">
           {/* Search Bar */}

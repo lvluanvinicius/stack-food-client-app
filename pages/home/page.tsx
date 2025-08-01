@@ -8,6 +8,7 @@ import { nextApi } from "@/services/next-api";
 import { MenuSectionInterface } from "@/types/menu";
 import MenuSection, { MenuSectionSkeleton } from "@/components/menu-section";
 import { Footer } from "@/components/footer";
+import { ActionsResponse } from "@/types";
 
 export function Page() {
   const [activeCategory, setActiveCategory] = useState<MenuCategory>("all");
@@ -46,7 +47,7 @@ export function Page() {
         {/* Only show featured items when not searching */}
         {/* {data && searchQuery === "" && <FeaturedItems items={data.data} />} */}
 
-        <div className="min-h-[100vh] w-full">
+        <div className="!z-0 min-h-[100vh] w-full">
           {data ? (
             data.map(function (item) {
               return (
