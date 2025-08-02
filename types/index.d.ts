@@ -65,3 +65,20 @@ export interface AddressInterface extends FormAddressInterface {
   created_at: string;
   updated_at: string;
 }
+
+export interface ViacepInterface {
+  erro?: string;
+  cep: string;
+  logradouro: string;
+  bairro: string;
+  localidade: string;
+  uf: string;
+  complemento: string;
+  ddd: string;
+  estado: string;
+  gia: string;
+  ibge: string;
+  regiao: string;
+  siafi: string;
+  unidade: string;
+}

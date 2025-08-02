@@ -50,4 +50,11 @@
   body {
     background: var(--color-primary-900);
   }
+
+  input,
+  select,
+  textarea {
+    border: 1px red transparent;
+    box-shadow: none;
+  }
 }
